@@ -1,0 +1,26 @@
+# MathIQ — Python Dependencies
+# Install: pip install -r requirements.txt
+
+# ── Core Streamlit ────────────────────────────────────────────────
+streamlit>=1.35.0
+
+# ── LangChain ecosystem ───────────────────────────────────────────
+langchain>=0.2.0
+langchain-core>=0.2.0
+langchain-community>=0.2.0
+langchain-groq>=0.1.6
+langchain-experimental>=0.0.61
+langsmith>=0.1.77
+
+# ── Groq (LLM provider) ───────────────────────────────────────────
+groq>=0.9.0
+
+# ── Math & computation tools ──────────────────────────────────────
+sympy>=1.12
+numpy>=1.26.0
+
+# ── Wikipedia tool ────────────────────────────────────────────────
+wikipedia-api>=0.6.0
+
+# ── Utilities ─────────────────────────────────────────────────────
+python-dotenv>=1.0.0
