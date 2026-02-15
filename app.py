@@ -9,10 +9,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ── Page config (MUST be first Streamlit call) ──────────────────────────────
+# ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="MathIQ · AI Math Reasoning Engine",
-    page_icon="∑",
+    page_icon="🧮",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -22,7 +22,6 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap');
 
-/* Root palette */
 :root {
     --bg:        #0a0f1e;
     --surface:   #111827;
@@ -39,26 +38,21 @@ st.markdown("""
     --highlight: #818cf8;
 }
 
-/* Global resets */
-html, body, [data-testid="stAppViewContainer"],
-[data-testid="stApp"] {
+html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
     background-color: var(--bg) !important;
     color: var(--text) !important;
     font-family: 'IBM Plex Sans', sans-serif !important;
 }
 
-/* Hide default Streamlit chrome */
 #MainMenu, footer, header { visibility: hidden; }
 [data-testid="stToolbar"] { display: none; }
 
-/* Sidebar */
 [data-testid="stSidebar"] {
     background: var(--surface) !important;
     border-right: 1px solid var(--border) !important;
 }
 [data-testid="stSidebar"] * { color: var(--text) !important; }
 
-/* Inputs */
 input, textarea {
     background: var(--bg) !important;
     border: 1px solid var(--border) !important;
@@ -71,7 +65,6 @@ input:focus, textarea:focus {
     box-shadow: 0 0 0 2px var(--glow) !important;
 }
 
-/* Buttons */
 .stButton > button {
     background: linear-gradient(135deg, var(--accentD), var(--accent)) !important;
     color: #fff !important;
@@ -87,7 +80,6 @@ input:focus, textarea:focus {
     box-shadow: 0 0 20px var(--glow) !important;
 }
 
-/* Chat messages */
 [data-testid="stChatMessage"] {
     background: var(--surface) !important;
     border: 1px solid var(--border) !important;
@@ -95,7 +87,6 @@ input:focus, textarea:focus {
     margin-bottom: 12px !important;
 }
 
-/* Chat input */
 [data-testid="stChatInput"] {
     background: var(--surface) !important;
     border-top: 1px solid var(--border) !important;
@@ -105,28 +96,9 @@ input:focus, textarea:focus {
     color: var(--text) !important;
 }
 
-/* Selectbox / radio */
-[data-testid="stSelectbox"] > div, [data-testid="stRadio"] > div {
-    background: var(--alt) !important;
-    border-radius: 8px !important;
-}
+[data-testid="stSelectbox"] > div { background: var(--alt) !important; border-radius: 8px !important; }
+[data-testid="stExpander"] { background: var(--alt) !important; border: 1px solid var(--border) !important; border-radius: 8px !important; }
 
-/* Expander */
-[data-testid="stExpander"] {
-    background: var(--alt) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: 8px !important;
-}
-
-/* Metric cards */
-[data-testid="stMetric"] {
-    background: var(--alt) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: 10px !important;
-    padding: 12px !important;
-}
-
-/* Code blocks */
 code, pre {
     background: var(--bg) !important;
     color: var(--highlight) !important;
@@ -135,15 +107,6 @@ code, pre {
     font-family: 'IBM Plex Mono', monospace !important;
 }
 
-/* Success / error banners */
-.success-box {
-    background: rgba(34,197,94,0.08);
-    border: 1px solid rgba(34,197,94,0.3);
-    border-left: 3px solid #22c55e;
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin: 10px 0;
-}
 .error-box {
     background: rgba(239,68,68,0.08);
     border: 1px solid rgba(239,68,68,0.3);
@@ -151,6 +114,7 @@ code, pre {
     border-radius: 8px;
     padding: 14px 18px;
     margin: 10px 0;
+    color: #fca5a5;
 }
 .step-box {
     background: rgba(99,102,241,0.05);
@@ -162,6 +126,7 @@ code, pre {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 13px;
     color: #94a3b8;
+    white-space: pre-wrap;
 }
 .badge {
     display: inline-block;
@@ -194,26 +159,37 @@ code, pre {
     color: #22c55e;
     margin-top: 8px;
 }
+.understand-box {
+    background: #1a2035;
+    border: 1px solid #1e2d47;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    color: #e2e8f0;
+    font-size: 13px;
+    line-height: 1.7;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 </style>
 """, unsafe_allow_html=True)
 
-# ── Lazy imports (only after page config) ───────────────────────────────────
+# ── Imports after page config ─────────────────────────────────────────────────
 from src.agent import build_agent, run_agent
 from src.utils import validate_api_keys, format_response_html
 
-# ── Session state defaults ───────────────────────────────────────────────────
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "mode" not in st.session_state:
-    st.session_state.mode = "Exam Mode"
-if "show_trace" not in st.session_state:
-    st.session_state.show_trace = True
-if "show_tools" not in st.session_state:
-    st.session_state.show_tools = True
-if "agent" not in st.session_state:
-    st.session_state.agent = None
+# ── Session state ─────────────────────────────────────────────────────────────
+defaults = {
+    "messages": [],
+    "mode": "Exam Mode",
+    "show_trace": True,
+    "show_tools": True,
+    "agent": None,
+}
+for k, v in defaults.items():
+    if k not in st.session_state:
+        st.session_state[k] = v
 
-# ── Sidebar ──────────────────────────────────────────────────────────────────
+# ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("""
     <div style="padding:8px 0 16px">
@@ -228,22 +204,23 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # Model status badge — no API key shown in UI
+    # Model badge
     st.markdown("""
-    <div style="background:rgba(99,102,241,0.1);border:1px solid #6366f1;border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
-        <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;animation:pulse 2s infinite"></div>
-        <div>
-            <div style="font-size:12px;font-weight:600;color:#818cf8">Gemma 2 9B · Groq</div>
-            <div style="font-size:10px;color:#64748b">temperature: 0.2 · via LangChain</div>
+    <div style="background:rgba(99,102,241,0.1);border:1px solid #6366f1;border-radius:8px;padding:10px 14px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;animation:pulse 2s infinite;flex-shrink:0"></div>
+            <div>
+                <div style="font-size:12px;font-weight:600;color:#818cf8">Gemma 2 9B · Groq</div>
+                <div style="font-size:10px;color:#64748b">temperature: 0.2 · via LangGraph</div>
+            </div>
         </div>
     </div>
-    <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}</style>
     """, unsafe_allow_html=True)
 
     # LangSmith status
     ls_active = bool(os.getenv("LANGCHAIN_API_KEY") or os.getenv("LANGSMITH_API_KEY"))
-    ls_color = "#22c55e" if ls_active else "#ef4444"
-    ls_label = "LangSmith Tracing Active" if ls_active else "LangSmith Not Configured"
+    ls_color  = "#22c55e" if ls_active else "#f59e0b"
+    ls_label  = "LangSmith Tracing Active" if ls_active else "LangSmith Not Configured"
     st.markdown(f"""
     <div style="font-size:11px;color:{ls_color};margin-bottom:16px;display:flex;align-items:center;gap:6px">
         <span>●</span> {ls_label}
@@ -260,7 +237,11 @@ with st.sidebar:
         index=2,
         label_visibility="collapsed",
     )
-    st.session_state.mode = mode
+
+    # Reset agent when mode changes
+    if mode != st.session_state.mode:
+        st.session_state.mode  = mode
+        st.session_state.agent = None   # force rebuild with new mode
 
     MODE_DESCS = {
         "Solve Only":          "⚡ Fast, direct answer with minimal steps",
@@ -272,18 +253,17 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # Display toggles
     st.markdown('<div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px">Display Options</div>', unsafe_allow_html=True)
     st.session_state.show_trace = st.toggle("Show Reasoning Trace", value=st.session_state.show_trace)
-    st.session_state.show_tools = st.toggle("Show Tool Usage", value=st.session_state.show_tools)
+    st.session_state.show_tools = st.toggle("Show Tool Usage",       value=st.session_state.show_tools)
 
     st.markdown("---")
 
     if st.button("🗑️ Clear Chat", use_container_width=True):
         st.session_state.messages = []
+        st.session_state.agent    = None
         st.rerun()
 
-    # Footer
     st.markdown("""
     <div style="font-size:10px;color:#64748b;margin-top:20px;line-height:1.8">
         <div>LangChain · LangSmith · Groq API</div>
@@ -291,25 +271,33 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-# ── Header ───────────────────────────────────────────────────────────────────
+# ── Header ────────────────────────────────────────────────────────────────────
 st.markdown(f"""
 <div style="display:flex;align-items:center;gap:12px;padding:0 0 16px;border-bottom:1px solid #1e2d47;margin-bottom:24px">
-    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#a855f7);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 24px rgba(99,102,241,0.3)">∑</div>
+    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#a855f7);
+                display:flex;align-items:center;justify-content:center;font-size:22px;
+                box-shadow:0 0 24px rgba(99,102,241,0.3)">🧮</div>
     <div>
-        <div style="display:flex;align-items:center;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span style="font-size:20px;font-weight:700;color:#fff">Math<span style="color:#6366f1">IQ</span></span>
             <span class="badge">Gemma 2 · Groq</span>
-            <span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);color:#22c55e">{mode}</span>
+            <span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700;
+                         letter-spacing:0.08em;text-transform:uppercase;
+                         border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);color:#22c55e">
+                {mode}
+            </span>
         </div>
-        <div style="font-size:11px;color:#64748b;margin-top:2px">AI Math Reasoning Engine — Structured · Traceable · Verifiable</div>
+        <div style="font-size:11px;color:#64748b;margin-top:2px">
+            AI Math Reasoning Engine — Structured · Traceable · Verifiable
+        </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ── Empty state / welcome ─────────────────────────────────────────────────────
+# ── Welcome / empty state ─────────────────────────────────────────────────────
 if not st.session_state.messages:
     st.markdown("""
-    <div style="text-align:center;padding:32px 0 24px">
+    <div style="text-align:center;padding:24px 0 20px">
         <p style="font-size:13px;color:#64748b;line-height:1.6;max-width:560px;margin:0 auto">
             Powered by <strong style="color:#818cf8">Gemma 2 via Groq</strong> ·
             LangChain Agent Orchestration · LangSmith Tracing<br>
@@ -322,12 +310,11 @@ if not st.session_state.messages:
         "A train leaves Chicago at 60 mph. Another leaves Denver (1000 miles away) at 80 mph toward Chicago. Where do they meet?",
         "Find the derivative of f(x) = 3x³ - 5x² + 2x - 7",
         "Solve the system: 2x + 3y = 12 and x - y = 1",
-        "A bag has 4 red and 6 blue balls. What's the probability of drawing 2 red balls without replacement?",
-        "Integrate ∫(x² + 2x + 1)dx from 0 to 3",
+        "A bag has 4 red and 6 blue balls. What is the probability of drawing 2 red balls without replacement?",
+        "Integrate (x² + 2x + 1)dx from 0 to 3",
     ]
 
     st.markdown('<div style="font-size:10px;font-weight:700;color:#64748b;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px">Try a sample problem</div>', unsafe_allow_html=True)
-    cols = st.columns(1)
     for i, prob in enumerate(sample_problems):
         if st.button(f"→  {prob}", key=f"sample_{i}", use_container_width=True):
             st.session_state.messages.append({"role": "user", "content": prob})
@@ -350,34 +337,41 @@ if not st.session_state.messages:
             </div>
             """, unsafe_allow_html=True)
 
-# ── Render chat history ───────────────────────────────────────────────────────
+# ── Render existing chat history ──────────────────────────────────────────────
 for msg in st.session_state.messages:
-    with st.chat_message(msg["role"], avatar="👤" if msg["role"] == "user" else "∑"):
-        if msg["role"] == "user":
+    role = msg["role"]
+    # FIX: Streamlit only accepts "user" or "assistant" as avatar role strings
+    # Use emoji string for avatar — must be a single emoji, not "∑"
+    avatar = "👤" if role == "user" else "🤖"
+    with st.chat_message(role, avatar=avatar):
+        if role == "user":
             st.markdown(msg["content"])
         else:
-            # Render structured AI response
             data = msg.get("data", {})
-            format_response_html(
-                data,
-                show_trace=st.session_state.show_trace,
-                show_tools=st.session_state.show_tools,
-            )
+            if data:
+                format_response_html(
+                    data,
+                    show_trace=st.session_state.show_trace,
+                    show_tools=st.session_state.show_tools,
+                )
+            else:
+                st.markdown(msg.get("content", ""))
 
-# ── Chat input ────────────────────────────────────────────────────────────────
+# ── Chat input + agent call ───────────────────────────────────────────────────
 if prompt := st.chat_input("Enter a math problem… (Enter to send)"):
+    # Add user message
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     with st.chat_message("user", avatar="👤"):
         st.markdown(prompt)
 
-    with st.chat_message("assistant", avatar="∑"):
-        with st.spinner("Reasoning through your problem…"):
+    # AI response — FIX: use "assistant" role with emoji avatar
+    with st.chat_message("assistant", avatar="🤖"):
+        with st.spinner("🧠 Reasoning through your problem…"):
             try:
-                # Validate keys exist
                 validate_api_keys()
 
-                # Build agent if not cached
+                # Rebuild agent if needed (first run or mode changed)
                 if st.session_state.agent is None:
                     st.session_state.agent = build_agent(mode=st.session_state.mode)
 
@@ -386,18 +380,28 @@ if prompt := st.chat_input("Enter a math problem… (Enter to send)"):
                     problem=prompt,
                     mode=st.session_state.mode,
                 )
+
                 format_response_html(
                     result,
                     show_trace=st.session_state.show_trace,
                     show_tools=st.session_state.show_tools,
                 )
+
                 st.session_state.messages.append({
-                    "role": "assistant",
+                    "role":    "assistant",
                     "content": result.get("answer", ""),
-                    "data": result,
+                    "data":    result,
                 })
 
             except ValueError as e:
-                st.markdown(f'<div class="error-box">⚠️ {str(e)}</div>', unsafe_allow_html=True)
+                err = str(e)
+                st.markdown(f'<div class="error-box">⚠️ {err}</div>', unsafe_allow_html=True)
+                st.session_state.messages.append({
+                    "role": "assistant", "content": err, "data": {}
+                })
             except Exception as e:
-                st.markdown(f'<div class="error-box">❌ Agent error: {str(e)}<br><small>Check your API keys in Streamlit secrets or .env file.</small></div>', unsafe_allow_html=True)
+                err = f"Agent error: {e}"
+                st.markdown(f'<div class="error-box">❌ {err}</div>', unsafe_allow_html=True)
+                st.session_state.messages.append({
+                    "role": "assistant", "content": err, "data": {}
+                })
