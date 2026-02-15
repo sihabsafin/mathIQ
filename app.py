@@ -210,7 +210,7 @@ with st.sidebar:
         <div style="display:flex;align-items:center;gap:8px">
             <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;animation:pulse 2s infinite;flex-shrink:0"></div>
             <div>
-                <div style="font-size:12px;font-weight:600;color:#818cf8">Gemma 2 9B · Groq</div>
+                <div style="font-size:12px;font-weight:600;color:#818cf8">Llama 3.3 70B · Groq</div>
                 <div style="font-size:10px;color:#64748b">temperature: 0.2 · via LangGraph</div>
             </div>
         </div>
@@ -280,7 +280,7 @@ st.markdown(f"""
     <div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span style="font-size:20px;font-weight:700;color:#fff">Math<span style="color:#6366f1">IQ</span></span>
-            <span class="badge">Gemma 2 · Groq</span>
+            <span class="badge">Llama 3.3 · Groq</span>
             <span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700;
                          letter-spacing:0.08em;text-transform:uppercase;
                          border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);color:#22c55e">
