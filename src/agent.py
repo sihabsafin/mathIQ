@@ -172,7 +172,7 @@ def build_agent(mode: str = "Exam Mode"):
             os.environ["LANGCHAIN_API_KEY"] = langsmith_key
 
     llm = ChatGroq(
-        model="gemma2-9b-it",
+        model="llama-3.3-70b-versatile",
         temperature=0.2,
         max_tokens=2048,
         api_key=groq_api_key,
